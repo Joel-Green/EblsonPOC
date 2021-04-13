@@ -240,9 +240,9 @@ export default function Login({ navigation, ...props }) {
               </Text>
             </TouchableOpacity>
             <View style={{ display: 'flex', flexDirection: 'row' }}>
-              <Text>Not a Member? </Text>
+              <Text style={styles.register}>Not a Member? </Text>
               <TouchableOpacity>
-                <Text style={{ color: PRIMARY_COLOR }}>Register</Text>
+                <Text style={[styles.register, { color: PRIMARY_COLOR }]}>Register</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -276,5 +276,8 @@ const styles = StyleSheet.create({
   image: {
     maxHeight: '100%',
     resizeMode: 'stretch',
+  },
+  register:{
+    fontSize:11,
   },
 });

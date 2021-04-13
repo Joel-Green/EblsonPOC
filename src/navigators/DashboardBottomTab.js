@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Dashboard from '../components/Dashboard';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { GOLD, LIGHT_GREY } from '../globals/colors';
+import { GOLD, LIGHT_GRAY } from '../globals/colors';
 
 export default function DashboardBottomTab() {
   const Tab = createBottomTabNavigator();
@@ -38,19 +38,19 @@ export default function DashboardBottomTab() {
           // You can return any component that you like here!
 
           if (route.name === 'Home') {
-            color = focused ? GOLD : LIGHT_GREY;
+            color = focused ? GOLD : LIGHT_GRAY;
             size = focused ? 18 : 16;
             return <MIcon name="home" size={size} color={color} />;
           } else if (route.name === 'Trophies') {
-            color = focused ? GOLD : LIGHT_GREY;
+            color = focused ? GOLD : LIGHT_GRAY;
             size = focused ? 18 : 16;
             return <MCIcon name="trophy" size={size} color={color} />;
           } else if (route.name === 'Inbox') {
-            color = focused ? GOLD : LIGHT_GREY;
+            color = focused ? GOLD : LIGHT_GRAY;
             size = focused ? 18 : 16;
             return <MIcon name="inbox" size={size} color={color} />;
           } else if (route.name === 'More') {
-            color = focused ? GOLD : LIGHT_GREY;
+            color = focused ? GOLD : LIGHT_GRAY;
             size = focused ? 18 : 16;
             return <MIcon name="more-horiz" size={size} color={color} />;
           }

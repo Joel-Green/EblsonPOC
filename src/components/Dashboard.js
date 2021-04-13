@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   StyleSheet,
   View,
@@ -6,6 +6,7 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { useIsFocused } from '@react-navigation/native';
 import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
@@ -16,19 +17,23 @@ import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { SliderBox } from 'react-native-image-slider-box';
 
 import { mainStyles } from '../globals/styles';
-import { GOLD, LIGHT_GREY, WHITE, PRIMARY_COLOR, BROWN } from '../globals/colors';
+import { GOLD, LIGHT_GRAY, WHITE, PRIMARY_COLOR, BROWN } from '../globals/colors';
 
 import { getBanner } from '../services/banner.service';
 import { getMatches } from '../services/match.service';
+import {removeUserJwt} from '../services/user.service';
 
 import { shortenTeamName } from '../utils/team';
 
 import VsLeft from '../assets/vs_left.svg';
 import VsRight from '../assets/vs_right.svg';
 import { timeLeft } from '../utils/generalUtils';
+import { loginContext } from '../navigators/RootStack';
 
 export default function Dashboard(props) {
   const isFocused = useIsFocused();
+
+  const [isLoggedIn, setIsLoggedIn] = useContext(loginContext)
 
   const [bannerArr, setBannerArr] = useState([]);
   const [matchArr, setMatchArr] = useState([]);
@@ -132,6 +137,24 @@ export default function Dashboard(props) {
     );
   };
 
+  const Logout = ()=>{
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to Logout?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel"
+        },
+        { text: "OK", onPress: async () => {
+    await removeUserJwt();
+    setIsLoggedIn(false);
+        } }
+      ])
+
+  }
+
   useEffect(() => {
     if (isFocused) {
       getBannerArr();
@@ -150,9 +173,9 @@ export default function Dashboard(props) {
                 backgroundColor: PRIMARY_COLOR,
               }}>
               <View style={styles.headerRow}>
-                <View>
+                <TouchableOpacity onPress={()=>Logout()}>
                   <MIcon name="account-circle" color={WHITE} size={25} />
-                </View>
+                </TouchableOpacity>
                 <View style={{ maxHeight: 50 }}>
                   <Image
                     source={require('../assets/logo.png')}
@@ -200,7 +223,7 @@ export default function Dashboard(props) {
 
 const styles = StyleSheet.create({
   headerText: {
-    color: LIGHT_GREY,
+    color: LIGHT_GRAY,
     fontSize: 16,
     fontWeight: 'bold',
   },

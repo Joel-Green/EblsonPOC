@@ -1,5 +1,6 @@
 import React, { useState, createContext, useEffect } from 'react';
-import {StyleSheet, TouchableOpacity, View, Text} from 'react-native'
+import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import SplashScreen from 'react-native-splash-screen'
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import Toast from 'react-native-toast-message';
@@ -10,6 +11,8 @@ import DashboardBottomTab from './DashboardBottomTab';
 
 import { getUserJwt } from '../services/user.service';
 
+import { PRIMARY_COLOR, WHITE } from '../globals/colors';
+import { mainStyles } from '../globals/styles';
 
 import { shortenTeamName } from '../utils/team';
 import { timeLeft } from '../utils/generalUtils';
@@ -23,6 +26,7 @@ export default function RootStack() {
     const val = await getUserJwt();
     if (val) setIsLoggedIn(true);
     else setIsLoggedIn(false);
+    SplashScreen.hide();
   };
 
   useEffect(() => {
@@ -45,25 +49,36 @@ export default function RootStack() {
                 component={Bet}
                 options={({ route }) => ({
                   headerShown: true,
+                  headerStyle: {
+                    backgroundColor: PRIMARY_COLOR,
+                  },
+                  headerTintColor: '#fff',
 
-                  // headerTitle: () => {
-                  //   return (
-                  //     <View style={styles.flexColumn}>
-                  //       <View style={styles.flexRow}>
-                  //         <Text style={[styles.txtWhite, styles.heading]}>
-                  //           {route.params.match.first_team}
-                  //         </Text>
-                  //         <Text style={[styles.txtWhite, styles.vsTxt]}>
-                  //           vs
-                  //         </Text>
-                  //         <Text style={[styles.txtWhite, styles.heading]}>
-                  //           {route.params.second_team}
-                  //         </Text>
-                  //       </View>
-                  //       <Text style={styles.txtWhite}>{route.params.time}</Text>
-                  //     </View>
-                  //   );
-                  // },
+                  headerTitle: () => {
+                    return (
+                      <View style={mainStyles.flexColumn}>
+                        <View style={mainStyles.flexRow}>
+                          <Text style={styles.teamName}>
+                            {shortenTeamName(
+                              route.params.match.first_team[0].team_name,
+                            )}
+                          </Text>
+                          <Text style={styles.Vs}>vs</Text>
+                          <Text style={styles.teamName}>
+                            {shortenTeamName(
+                              route.params.match.second_team[0].team_name,
+                            )}
+                          </Text>
+                        </View>
+                        <Text style={styles.time}>
+                          {timeLeft(
+                            route.params.match.batting_start_date,
+                            route.params.match.batting_start_time,
+                          )}
+                        </Text>
+                      </View>
+                    );
+                  },
                   // headerRight: () => (
                   //   <TouchableOpacity>
                   //     <Icon
@@ -94,13 +109,18 @@ export default function RootStack() {
 }
 
 const styles = StyleSheet.create({
-  teamName:{
-
+  teamName: {
+    fontWeight: 'bold',
+    fontSize: 14,
+    color: WHITE,
   },
-  Vs:{
-
+  Vs: {
+    fontSize: 14,
+    color: WHITE,
+    marginHorizontal: 4,
   },
-  time:{
-
-  }
-})
+  time: {
+    fontSize: 12,
+    color: WHITE,
+  },
+});

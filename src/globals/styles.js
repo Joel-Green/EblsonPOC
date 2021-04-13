@@ -14,6 +14,11 @@ export const mainStyles = StyleSheet.create({
   flexColumn:{
     display:'flex',
     flexDirection:'column'
+  },
+  flexCenter:{
+    display:'flex',
+    justifyContent:'center',
+    alignItems:'center'
   }
 
 });
