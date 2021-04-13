@@ -205,6 +205,7 @@ export default function Login({ navigation, ...props }) {
                 placeholder="Enter Your Password"
                 value={password}
                 onChangeText={val => setPassword(val)}
+                onSubmitEditing={()=>{handleLogin()}}
                 secureTextEntry={true}
                 ref={passwordRef}
               />
@@ -272,6 +273,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     paddingVertical: 2,
     marginTop: 0,
+    color:BLACK
   },
   image: {
     maxHeight: '100%',
