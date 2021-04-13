@@ -5,5 +5,15 @@ export const mainStyles = StyleSheet.create({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
+    backgroundColor:'white'
   },
+  flexRow:{
+    display:'flex',
+    flexDirection:'row'
+  },
+  flexColumn:{
+    display:'flex',
+    flexDirection:'column'
+  }
+
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
   StyleSheet,
   View,
@@ -13,32 +13,32 @@ import {
   KeyboardAvoidingView,
   BackHandler,
 } from 'react-native';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { useIsFocused } from '@react-navigation/native';
 
 import {
   PRIMARY_COLOR,
   SECONDARY_COLOR,
-  LIGHT_TEXT,
-  DARK_TEXT,
+  WHITE,
+  BLACK,
 } from '../globals/colors';
 import { mainStyles } from '../globals/styles';
 
 import { login, storeUserJwt } from '../services/user.service';
 
 import { showToast } from '../utils/toast';
+import { loginContext } from '../navigators/RootStack'
 
 export default function Login({ navigation, ...props }) {
   const slideAnim = useRef(new Animated.Value(0)).current;
   const [showPassword, setShowPassword] = useState(false);
 
+  const passwordRef = useRef('');
+  const [isLoggedIn, setIsLoggedIn] = useContext(loginContext)
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const isFoucsed = useIsFocused();
+  const isFocused = useIsFocused();
 
   const slideToPassword = () => {
     setShowPassword(true);
@@ -75,15 +75,17 @@ export default function Login({ navigation, ...props }) {
           type: 'success',
         });
         await storeUserJwt(res.data.data.token);
-        navigation.navigate('Dashboard');
+        setIsLoggedIn(true)
       } else {
         console.log(res.data);
         // showToast({text1:'Error', text2:error.response.data.error, type:'error'})
         for (const property in res.data.error) {
-          res.data.error[property].forEach(el => {
+          for (el of res.data.error[property]) {
             console.log(el);
             showToast({ text1: 'Error', text2: el, type: 'error' });
-          });
+            break;
+          }
+          break;
         }
         slideToLogin();
       }
@@ -111,15 +113,23 @@ export default function Login({ navigation, ...props }) {
 
     let backHandler;
 
-    if (isFoucsed)
+    if (isFocused)
       backHandler = BackHandler.addEventListener(
         'hardwareBackPress',
         backAction,
       );
-    if (!isFoucsed) backHandler?.remove();
+    if (!isFocused) {
+      backHandler?.remove();
+      setShowPassword(false)
+      Animated.timing(slideAnim).reset();
+    }
 
-    return () => backHandler?.remove();
-  }, []);
+    return () => {
+      backHandler?.remove();
+      setShowPassword(false)
+      Animated.timing(slideAnim).reset();
+    };
+  }, [isFocused]);
 
   return (
     <View style={mainStyles.container}>
@@ -154,6 +164,9 @@ export default function Login({ navigation, ...props }) {
                 style={styles.textInput}
                 placeholder="Enter Your Email"
                 value={email}
+                keyboardType='email-address'
+                returnKeyType="next"
+                onSubmitEditing={()=>{slideToPassword(); passwordRef.current.focus()}}
                 onChangeText={val => setEmail(val)}
               />
             </KeyboardAvoidingView>
@@ -173,6 +186,8 @@ export default function Login({ navigation, ...props }) {
                 placeholder="Enter Your Phone"
                 value={phone}
                 onChangeText={val => setPhone(val)}
+                returnKeyType="next"
+                onSubmitEditing={()=>{slideToPassword(); passwordRef.current.focus()}}
                 keyboardType="numeric"
               />
             </KeyboardAvoidingView>
@@ -191,6 +206,7 @@ export default function Login({ navigation, ...props }) {
                 value={password}
                 onChangeText={val => setPassword(val)}
                 secureTextEntry={true}
+                ref={passwordRef}
               />
             </KeyboardAvoidingView>
           </View>
@@ -214,12 +230,12 @@ export default function Login({ navigation, ...props }) {
               onPress={() => (showPassword ? handleLogin() : slideToPassword())}
               style={{
                 backgroundColor: PRIMARY_COLOR,
-                color: LIGHT_TEXT,
+                color: WHITE,
                 paddingHorizontal: 40,
                 paddingVertical: 10,
                 borderRadius: 5,
               }}>
-              <Text style={{ color: LIGHT_TEXT }}>
+              <Text style={{ color: WHITE }}>
                 {showPassword ? 'Login' : 'Next'}
               </Text>
             </TouchableOpacity>
